@@ -22,7 +22,12 @@ int main() {
         named_condition cond_var(open_only, "SharedMemoryCondition");
 
         while (true) {
+
+            std::cout << "cpp trying to lock mutex" << std::endl;
+
             std::unique_lock<named_mutex> lock(mutex);
+
+            std::cout << "cpp locked mutex" << std::endl;
 
             // Wait for Repo A's update
             cond_var.wait(lock, [&] { return data->updated_A; });
@@ -35,6 +40,9 @@ int main() {
 
             // Notify Repo A
             cond_var.notify_one();
+
+            // Sleep for 2 seconds to run at 0.5 Hz (1/0.5 = 2 seconds)
+            std::this_thread::sleep_for(std::chrono::seconds(2));
         }
     } catch (const interprocess_exception& e) {
         std::cerr << "Shared memory not found! Ensure Repo A is running." << std::endl;

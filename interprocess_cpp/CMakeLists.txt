@@ -8,9 +8,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Find Boost (ensure Interprocess is included)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 
-# Add executable
-add_executable(repo_b src/main.cpp)
+# Add executable for main (existing setup)
+add_executable(main src/main.cpp)
+target_include_directories(main PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(main PRIVATE ${Boost_LIBRARIES})
 
-# Link Boost
-target_include_directories(repo_b PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(repo_b PRIVATE ${Boost_LIBRARIES})
+# Linux (POSIX) examples
+add_executable(process1 tests/main1.cpp)
+add_executable(process2 tests/main2.cpp)
+
+# Link pthread for POSIX thread support
+target_link_libraries(process1 PRIVATE pthread)
+target_link_libraries(process2 PRIVATE pthread)
